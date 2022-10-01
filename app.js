@@ -10,6 +10,7 @@ const conn = require('./DbConnection').con
 
 const driverRoute = require("./routes/driverRoutes")
 const passengerRoute = require("./routes/passengerRoutes")
+const accountRoute = require("./routes/accountRoute")
 
 const PORT = 4000
 
@@ -25,6 +26,7 @@ app.use(
 app.use(bodyParser.json());
 
 app.use('/driver', driverRoute)
+app.use('/account', accountRoute)
 app.use('/passenger', passengerRoute)
 
 app.use("/",(req, res)=>{
