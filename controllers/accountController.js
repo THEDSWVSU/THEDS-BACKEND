@@ -15,7 +15,7 @@ exports.registerPassenger = (req, res)=>{
 
     }
 
-    dbConnection.query("INSERT INTO accounts SET ?", toInsert, (err, result)=>{
+    dbConnection.query("INSERT INTO passengers SET ?", toInsert, (err, result)=>{
         if(err){
             res.sendStatus(500)
             console.log(err)
@@ -37,7 +37,7 @@ exports.getId = (req, res)=> {
 
     console.log(username)
     console.log(password)
-    dbConnection.query("SELECT id from accounts WHERE username = ? AND password = ?", [username, password], (err, result)=>{
+    dbConnection.query("SELECT id from passengers WHERE username = ? AND password = ?", [username, password], (err, result)=>{
         if(err){
             res.sendStatus(500)
             res.send(err)

@@ -29,13 +29,11 @@ app.use('/driver', driverRoute)
 app.use('/account', accountRoute)
 app.use('/passenger', passengerRoute)
 
-app.use("/",(req, res)=>{
-    res.send("Hey You")
-})
-
 app.listen(PORT, ()=>{
     console.log("Server is listening at port: "+PORT)
 })
+
+
 conn.connect(function (err) {
     if (err) {
       throw err;
