@@ -24,14 +24,23 @@ exports.requestDelivery=(req, res)=>{
     })
 }
 exports.requestRide=(req, res)=>{
-    const origin = req.body.origin
-    const destination = req.body.destination
-    const time = req.body.time
-    const passengerId =  req.body.passengerId
- 
-    let sql = "INSERT INTO hailings (`passenger`, `pickup_time`, `origin`, `destination`) VALUES(?,?,?,?)"
+    const tripData = req.body.data
 
-    dbConnection.query(sql, [passengerId, time, origin, destination],(err, result)=>{
+    console.log(tripData)
+ 
+    let sql = "INSERT INTO hailings (`passenger`, `pickup_time`, `origin`, `destination`,distance, num_passenger, price, coords  ) VALUES(?,?,?,?,?,?,?,?)"
+
+    const toInsert= [
+        tripData.passengerId,
+        tripData.time,
+        tripData.origin,
+        tripData.destination,
+        tripData.distance,
+        tripData.numPassenger,
+        tripData.price,
+        JSON.stringify(tripData.coords)
+    ]
+    dbConnection.query(sql, toInsert,(err, result)=>{
         if(err){
             console.log(err)
             res.send({success:false})
