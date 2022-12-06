@@ -50,7 +50,7 @@ exports.login = (req,res) => {
 }
 
 exports.getFeeds = (req, res) => {
-    const sql = "SELECT passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.pakage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `delivery` INNER JOIN passengers on delivery.passenger_id = passengers.id WHERE delivery.status = 'pending';"
+    const sql = "SELECT passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.small_luggage, delivery.medium_luggage, delivery.large_luggage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time, delivery.price, delivery.distance FROM `delivery` INNER JOIN passengers on delivery.passenger = passengers.id WHERE delivery.status = 'pending';"
 
     dbConnection.query(sql, (err, result)=>{
         if(err){
@@ -70,7 +70,6 @@ exports.getHailings = (req, res) => {
             console.log(err)
             return res.send({success:false})
         }
-        console.log(result)
         return res.send({success:true, data:result})
     })
 }
@@ -84,20 +83,20 @@ exports.getQue = (req, res) => {
             return res.send({success:false})
         }
 
-        console.log(result)
         return res.send({success:true, data:result})
     })
 }
 exports.getDeliveryDetails = (req, res) => {
     const tripId = req.body.tripId
+    console.log("Getting delivery details")
 
-    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.pakage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `delivery` INNER JOIN passengers on delivery.passenger_id = passengers.id WHERE delivery.id = ?;"
+    const sql = "SELECT passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.small_luggage, delivery.medium_luggage, delivery.large_luggage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time, delivery.price, delivery.distance FROM `delivery` INNER JOIN passengers on delivery.passenger = passengers.id WHERE delivery.id = ?;"
     dbConnection.query(sql, tripId,(err, result)=>{
         if(err){
             res.send({success:false})
             throw err
         }
-        res.send(result[0])
+        return res.send(result[0])
     })
 }
 exports.getHailingDetails = (req, res) => {
@@ -109,7 +108,7 @@ exports.getHailingDetails = (req, res) => {
             res.send({success:false})
             throw err
         }
-        res.send(result[0])
+        return res.send(result[0])
     })
 }
 exports.acceptTrip = (req, res) => { 
@@ -146,5 +145,6 @@ exports.acceptTrip = (req, res) => {
             })
         })
     })
+    
     
 }

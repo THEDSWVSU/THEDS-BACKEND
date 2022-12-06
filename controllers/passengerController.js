@@ -1,18 +1,24 @@
 const dbConnection = require("../dbConnection.js").con
 
 exports.requestDelivery=(req, res)=>{
-    const origin = req.body.origin
-    const destination = req.body.destination
-    const pakage = req.body.pakage
-    const time = req.body.time
-    const passengerId =  req.body.passengerId
+    const tripData = req.body.data
+    const actualPrice = req.body.actualPrice
 
-    console.log("Request body",req.body)
+    const toInsert= [
+        tripData.passengerId,
+        tripData.time,
+        tripData.origin,
+        tripData.destination,
+        tripData.distance,
+        actualPrice,
+        JSON.stringify(tripData.coords),
+        tripData.largeLuggage,
+        tripData.mediumLuggage,
+        tripData.smallLuggage,
+    ]
+    let sql = "INSERT INTO delivery (`passenger`, `pickup_time`, `origin`, `destination`,distance, price, coords,large_luggage,medium_luggage, small_luggage  ) VALUES(?,?,?,?,?,?,?,?,?,?)"
 
- 
-    let sql = "INSERT INTO delivery (`pakage`,`pickup_time`,`origin`,`destination`, `passenger_id`) VALUES(?,?,?,?,?)"
-
-    dbConnection.query(sql, [pakage, time, origin, destination, passengerId],(err, result)=>{
+    dbConnection.query(sql, toInsert,(err, result)=>{
         if(err){
             console.log(err)
             res.send({success:false})
@@ -22,6 +28,7 @@ exports.requestDelivery=(req, res)=>{
 
         return res.send({success:true})
     })
+    return console.log(req.body)
 }
 exports.requestRide=(req, res)=>{
     const tripData = req.body.data
@@ -55,8 +62,7 @@ exports.requestRide=(req, res)=>{
 exports.getDeliveries = (req, res) => {
     const accountId = req.body.accountId
 
-    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.pakage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `delivery` INNER JOIN passengers on delivery.passenger_id = passengers.id WHERE delivery.status = 'pending' and delivery.passenger_id = ?;"
-    console.log("AccountId",accountId)
+    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time, delivery.large_luggage, delivery.medium_luggage, delivery.small_luggage, delivery.price, delivery.distance FROM `delivery` INNER JOIN passengers on delivery.passenger = passengers.id WHERE delivery.passenger = ? ORDER BY delivery.date_time;"
     dbConnection.query(sql, accountId,(err, result)=>{
         if(err){
             console.log(err)
@@ -69,7 +75,7 @@ exports.getDeliveries = (req, res) => {
 exports.getHailings = (req, res) => {
     const passengerId = req.body.passengerId
 
-    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, hailings.id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `hailings` INNER JOIN passengers on hailings.passenger = passengers.id WHERE hailings.status = 'pending' and hailings.passenger = ?;"
+    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, hailings.id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time, hailings.price, hailings.distance FROM `hailings` INNER JOIN passengers on hailings.passenger = passengers.id WHERE hailings.passenger = ? ORDER BY hailings.date_time DESC;"
     dbConnection.query(sql, passengerId,(err, result)=>{
         if(err){
             console.log(err)
@@ -112,7 +118,7 @@ exports.cancelHail = (req, res) => {
 exports.getDeliveryDetails = (req, res) => {
     const tripId = req.body.tripId
 
-    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.pakage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `delivery`, `trips` INNER JOIN passengers on trips.driver = passengers.id WHERE delivery.id = ?;"
+    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, delivery.price, delivery.id, delivery.small_luggage, delivery.medium_luggage, delivery.large_luggage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status,delivery.distance, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `delivery`, `trips` INNER JOIN passengers on trips.driver = passengers.id WHERE delivery.id = ?;"
     dbConnection.query(sql, tripId,(err, result)=>{
         if(err){
             res.send({success:false})
@@ -124,7 +130,7 @@ exports.getDeliveryDetails = (req, res) => {
 exports.getHailingDetails = (req, res) => {
     const tripId = req.body.tripId
 
-    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, hailings.id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `hailings`,`trips` INNER JOIN passengers on trips.driver = passengers.id WHERE hailings.id = ?;"
+    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, hailings.id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time,hailings.price, hailings.distance, hailings.num_passenger FROM `hailings`,`trips` INNER JOIN passengers on trips.driver = passengers.id WHERE hailings.id = ?;"
     dbConnection.query(sql, tripId,(err, result)=>{
         if(err){
             res.send({success:false})
@@ -136,7 +142,7 @@ exports.getHailingDetails = (req, res) => {
 exports.getNotification = (req, res) => {
     const accountId = req.body.accountId
 
-    const sql = "SELECT trips.* FROM trips INNER JOIN notification ON trips.service_id = notification.trip_id WHERE notification.user_id = ? ORDER BY trips.id DESC;"
+    const sql = "SELECT trips.*, notification.seen, notification.id as notif_id FROM trips INNER JOIN notification ON trips.service_id = notification.trip_id WHERE notification.user_id = ? ORDER BY trips.id DESC;"
     dbConnection.query(sql, accountId,(err, result)=>{
         if(err){
             console.log(err)
@@ -144,5 +150,18 @@ exports.getNotification = (req, res) => {
         }
         console.log(result)
         res.send(result)
+    })
+}
+exports.seeNotificaton = (req, res)=>{
+    const notifId = req.body.notifId
+    console.log("notification",notifId)
+
+    const sql = "UPDATE notification SET seen = 1 WHERE id=?"
+    dbConnection.query(sql, notifId,(err, result)=>{
+        if(err){
+            res.send({success:false})
+            return console.log(err)
+        }
+        console.log(result)
     })
 }

@@ -15,7 +15,7 @@ router.post("/getHailings",(req, res)=>passengerController.getHailings(req, res)
 router.post("/getDeliveries",(req, res)=>{
     passengerController.getDeliveries(req, res)
 })
-
+router.post("/seeNotificaton",(req, res)=>passengerController.seeNotificaton(req, res))
 router.post("/cancelDelivery",(req, res)=>passengerController.cancelDelivery(req, res))
 router.post("/cancelHail",(req, res)=>passengerController.cancelHail(req, res))
 
