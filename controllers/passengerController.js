@@ -23,7 +23,6 @@ exports.requestDelivery=(req, res)=>{
             console.log(err)
             res.send({success:false})
         }
-        console.log(result)
         if(!result.insertId)return res.send({success:false})
 
         return res.send({success:true})
@@ -33,7 +32,6 @@ exports.requestDelivery=(req, res)=>{
 exports.requestRide=(req, res)=>{
     const tripData = req.body.data
 
-    console.log(tripData)
  
     let sql = "INSERT INTO hailings (`passenger`, `pickup_time`, `origin`, `destination`,distance, num_passenger, price, coords  ) VALUES(?,?,?,?,?,?,?,?)"
 
@@ -52,7 +50,6 @@ exports.requestRide=(req, res)=>{
             console.log(err)
             res.send({success:false})
         }
-        console.log(result)
         if(!result.insertId)return res.send({success:false})
 
         return res.send({success:true})
@@ -68,7 +65,6 @@ exports.getDeliveries = (req, res) => {
             console.log(err)
             throw err
         }
-        console.log(result)
         res.send(result)
     })
 }
@@ -81,14 +77,11 @@ exports.getHailings = (req, res) => {
             console.log(err)
             throw err
         }
-        console.log(result)
         res.send(result)
     })
 }
 exports.cancelDelivery = (req, res) => { 
     const tripId = req.body.tripId
-
-
     const sql = "DELETE FROM delivery WHERE id = ?"
 
     dbConnection.query(sql, tripId, (err, result)=>{
@@ -96,7 +89,6 @@ exports.cancelDelivery = (req, res) => {
             console.log(err)
             return res.send({success:false})
         }
-        console.log(result)
         res.send({success:true})
 })
 }
@@ -111,7 +103,6 @@ exports.cancelHail = (req, res) => {
             console.log(err)
             return res.send({success:false})
         }
-        console.log(result)
         res.send({success:true})
 })
 }
@@ -142,13 +133,24 @@ exports.getHailingDetails = (req, res) => {
 exports.getNotification = (req, res) => {
     const accountId = req.body.accountId
 
-    const sql = "SELECT trips.*, notification.seen, notification.id as notif_id FROM trips INNER JOIN notification ON trips.service_id = notification.trip_id WHERE notification.user_id = ? ORDER BY trips.id DESC;"
+    const sql = "SELECT trips.*, notification.status as notif_status, notification.seen, notification.id as notif_id FROM trips INNER JOIN notification ON trips.service_id = notification.trip_id WHERE notification.user_id = ? GROUP BY notification.id ORDER BY notification.id DESC;"
     dbConnection.query(sql, accountId,(err, result)=>{
         if(err){
             console.log(err)
             throw err
         }
-        console.log(result)
+        res.send(result)
+    })
+}
+exports.countNotifs = (req, res) => {
+    const accountId = req.body.accountId
+
+    const sql = "SELECT COUNT(notification.id) as count FROM notification WHERE notification.user_id = ? AND notification.seen = 0 ORDER BY notification.id DESC;"
+    dbConnection.query(sql, accountId,(err, result)=>{
+        if(err){
+            console.log(err)
+            throw err
+        }
         res.send(result)
     })
 }
@@ -162,6 +164,5 @@ exports.seeNotificaton = (req, res)=>{
             res.send({success:false})
             return console.log(err)
         }
-        console.log(result)
     })
 }

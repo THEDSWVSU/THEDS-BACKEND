@@ -13,6 +13,7 @@ router.post("/getTripDetails/delivery", (req, res)=>driverController.getDelivery
 router.post("/getTripDetails/service", (req, res)=>driverController.getHailingDetails(req, res))
 
 router.post("/acceptTrip",(req,res)=>driverController.acceptTrip(req, res))
+router.post("/updateTrip",(req, res)=>driverController.updateTrip(req, res))
 router.post("/getQue",(req, res)=>driverController.getQue(req, res))
 router.get("/deliveryFeeds",(req, res)=>{
     driverController.getFeeds(req, res)

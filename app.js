@@ -11,6 +11,7 @@ const conn = require('./DbConnection').con
 const driverRoute = require("./routes/driverRoutes")
 const passengerRoute = require("./routes/passengerRoutes")
 const accountRoute = require("./routes/accountRoute")
+const adminRoute = require("./routes/adminRoute")
 
 const PORT = 4000
 
@@ -28,6 +29,9 @@ app.use(bodyParser.json());
 app.use('/driver', driverRoute)
 app.use('/account', accountRoute)
 app.use('/passenger', passengerRoute)
+app.use('/adminApi',adminRoute)
+
+app.use('/admin', express.static(path.join(__dirname, 'public')))
 
 app.listen(PORT, ()=>{
     console.log("Server is listening at port: "+PORT)

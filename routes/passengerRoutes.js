@@ -19,6 +19,8 @@ router.post("/seeNotificaton",(req, res)=>passengerController.seeNotificaton(req
 router.post("/cancelDelivery",(req, res)=>passengerController.cancelDelivery(req, res))
 router.post("/cancelHail",(req, res)=>passengerController.cancelHail(req, res))
 
+router.post("/countNotifs",(req, res)=>passengerController.countNotifs(req, res))
+
 router.post("/getNotification",(req, res)=>passengerController.getNotification(req, res))
 
 module.exports = router
