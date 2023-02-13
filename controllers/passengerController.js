@@ -1,10 +1,13 @@
 const dbConnection = require("../dbConnection.js").con
+const ShortUniqueId = require('short-unique-id');
 
-exports.requestDelivery=(req, res)=>{
+exports.requestDelivery=async(req, res)=>{
     const tripData = req.body.data
     const actualPrice = req.body.actualPrice
+    const transactionNumber = new ShortUniqueId({length:8})
 
     const toInsert= [
+        transactionNumber(),
         tripData.passengerId,
         tripData.time,
         tripData.origin,
@@ -16,7 +19,7 @@ exports.requestDelivery=(req, res)=>{
         tripData.mediumLuggage,
         tripData.smallLuggage,
     ]
-    let sql = "INSERT INTO delivery (`passenger`, `pickup_time`, `origin`, `destination`,distance, price, coords,large_luggage,medium_luggage, small_luggage  ) VALUES(?,?,?,?,?,?,?,?,?,?)"
+    let sql = "INSERT INTO delivery (`transaction_id`,`passenger`, `pickup_time`, `origin`, `destination`,distance, price, coords,large_luggage,medium_luggage, small_luggage  ) VALUES(?,?,?,?,?,?,?,?,?,?,?)"
 
     dbConnection.query(sql, toInsert,(err, result)=>{
         if(err){
@@ -31,11 +34,12 @@ exports.requestDelivery=(req, res)=>{
 }
 exports.requestRide=(req, res)=>{
     const tripData = req.body.data
-
+    const transactionNumber = new ShortUniqueId({length:8})
  
-    let sql = "INSERT INTO hailings (`passenger`, `pickup_time`, `origin`, `destination`,distance, num_passenger, price, coords  ) VALUES(?,?,?,?,?,?,?,?)"
+    let sql = "INSERT INTO hailings (`transaction_id`,`passenger`, `pickup_time`, `origin`, `destination`,distance, num_passenger, price, coords  ) VALUES(?,?,?,?,?,?,?,?,?)"
 
     const toInsert= [
+        transactionNumber(),
         tripData.passengerId,
         tripData.time,
         tripData.origin,
@@ -59,7 +63,7 @@ exports.requestRide=(req, res)=>{
 exports.getDeliveries = (req, res) => {
     const accountId = req.body.accountId
 
-    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time, delivery.large_luggage, delivery.medium_luggage, delivery.small_luggage, delivery.price, delivery.distance FROM `delivery` INNER JOIN passengers on delivery.passenger = passengers.id WHERE delivery.passenger = ? ORDER BY delivery.date_time;"
+    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, delivery.id,delivery.transaction_id, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time, delivery.large_luggage, delivery.medium_luggage, delivery.small_luggage, delivery.price, delivery.distance FROM `delivery` INNER JOIN passengers on delivery.passenger = passengers.id WHERE delivery.passenger = ? ORDER BY delivery.date_time;"
     dbConnection.query(sql, accountId,(err, result)=>{
         if(err){
             console.log(err)
@@ -71,7 +75,7 @@ exports.getDeliveries = (req, res) => {
 exports.getHailings = (req, res) => {
     const passengerId = req.body.passengerId
 
-    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, hailings.id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time, hailings.price, hailings.distance FROM `hailings` INNER JOIN passengers on hailings.passenger = passengers.id WHERE hailings.passenger = ? ORDER BY hailings.date_time DESC;"
+    const sql = "SELECT passengers.firstname, passengers.middlename, passengers.lastname, hailings.id, hailings.transaction_id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time, hailings.price, hailings.distance FROM `hailings` INNER JOIN passengers on hailings.passenger = passengers.id WHERE hailings.passenger = ? ORDER BY hailings.date_time DESC;"
     dbConnection.query(sql, passengerId,(err, result)=>{
         if(err){
             console.log(err)
