@@ -44,6 +44,10 @@ exports.login = (req,res) => {
             success:"failed",
             msg:"Your acount is not verified yet. Please wait for at least 24 hours."
         })
+        else if(result[0].status === "deactivated")res.send({
+            success:"failed",
+            msg:"Your acount is deactivated. Please contact the admin to resolve this issue."
+        })
         else res.send({
             status:"success",
             accountId:result[0].account_id

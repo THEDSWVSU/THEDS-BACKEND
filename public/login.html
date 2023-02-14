@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>THEDS LOGIN</title>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      body {
+        background-color: rgba(12, 63, 230, 0.541);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="container-fluid d-flex w-100 justify-content-center align-items-center"
+    >
+      <div class="row d-flex w-100 justify-content-center align-items-center">
+        <div class="col-lg-4 col-md-8 col-sm-10 col-12 pt-5">
+          <div class="card">
+            <div
+              class="card-header pt-4 d-flex flex-column align-items-center justify-content-center"
+            >
+              <img
+                src="./assets/images/logo.png"
+                width="100"
+                height="70"
+                class="d-inline-block align-top"
+                alt=""
+              />
+              <h5 class="d-flex justify-content-center m-3">THEDS</h5>
+            </div>
+            <div class="card-body ps-4 pe-4">
+              <p class="alert alert-warning" id="error" hidden>
+                Wrong password
+              </p>
+              <form class="form">
+                <div class="form-group">
+                  <label class="form-label small" for="#username"
+                    >Username</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    id="username"
+                    aria-label="username"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label small" for="#password"
+                    >Password</label
+                  >
+                  <input
+                    type="password"
+                    class="form-control form-control-sm"
+                    id="password"
+                    aria-label="password"
+                  />
+                </div>
+              </form>
+              <div class="card-footer pt-4 d-flex justify-content-center">
+                <button
+                  type="button"
+                  class="btn btn-md btn-primary"
+                  id="submit"
+                >
+                  Login
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
+      integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo="
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      let searchParams = new URLSearchParams(window.location.search);
+      let error = searchParams.get("error");
+
+      if (error) {
+        $("#error").removeAttr("hidden");
+        $("#error").text(error);
+      }
+
+      $("#submit").on("click", () => {
+        const username = $("#username").val();
+        const password = $("#password").val();
+
+        $("#submit").val("Loading...")
+        $("#submit").attr("disabled",true)
+        fetch("http://localhost:4000/adminApi/login", {
+          method: "POST", // *GET, POST, PUT, DELETE, etc.
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.success) {
+              $("#error").removeAttr("hidden");
+              $("#error").text(data.msg);
+            }
+            window.location.href = "/admin"
+            $("#submit").val("Login")
+        $("#submit").attr("disabled",false)
+          });
+      });
+    </script>
+  </body>
+</html>
