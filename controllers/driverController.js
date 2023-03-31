@@ -124,7 +124,7 @@ exports.acceptTrip = (req, res) => {
     const driverId = req.body.driverId
 
 
-    const sql = type==="delivery"?"UPDATE delivery set status = 'accepted' WHERE id = ?":"UPDATE hailings set status = 'accepted' WHERE id = ?"
+    const sql = type==="delivery"?"UPDATE delivery set status = 'accepted' WHERE id = ? AND status = 'pending'":"UPDATE hailings set status = 'accepted' WHERE id = ? AND status = 'pending'"
 
     dbConnection.query(sql, tripId, (err, result)=>{
         if(err){
@@ -132,6 +132,8 @@ exports.acceptTrip = (req, res) => {
             return res.send({success:false})
         }
         console.log(result)
+        if(!result.affectedRows) return res.send({success:false,msg:"Booking is not available"})
+        
         const addTrip = "INSERT INTO trips(service_id, type, driver) VALUES(?,?,?)"
 
         dbConnection.query(addTrip,[tripId, type, driverId],(err, result)=>{
