@@ -56,7 +56,7 @@ exports.login = (req,res) => {
 }
 
 exports.getFeeds = (req, res) => {
-    const sql = "SELECT passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.small_luggage, delivery.medium_luggage, delivery.large_luggage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time, delivery.price, delivery.distance FROM `delivery` INNER JOIN passengers on delivery.passenger = passengers.id WHERE delivery.status = 'pending';"
+    const sql = "SELECT passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname,passengers.phone_number, delivery.id, delivery.small_luggage, delivery.medium_luggage, delivery.large_luggage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time, delivery.price, delivery.distance FROM `delivery` INNER JOIN passengers on delivery.passenger = passengers.id WHERE delivery.status = 'pending';"
 
     dbConnection.query(sql, (err, result)=>{
         if(err){
@@ -68,7 +68,7 @@ exports.getFeeds = (req, res) => {
 }
 exports.getHailings = (req, res) => {
 
-    const sql = "SELECT passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname, hailings.id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `hailings` INNER JOIN passengers on hailings.passenger = passengers.id WHERE hailings.status = 'pending';"
+    const sql = "SELECT passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname, passengers.phone_number, hailings.id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `hailings` INNER JOIN passengers on hailings.passenger = passengers.id WHERE hailings.status = 'pending';"
 
     dbConnection.query(sql, (err, result)=>{
         if(err){
@@ -95,7 +95,7 @@ exports.getDeliveryDetails = (req, res) => {
     const tripId = req.body.tripId
     console.log("Getting delivery details")
 
-    const sql = "SELECT passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname, delivery.id, delivery.coords, delivery.small_luggage, delivery.medium_luggage, delivery.large_luggage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time, delivery.price, delivery.distance FROM `delivery` INNER JOIN passengers on delivery.passenger = passengers.id WHERE delivery.id = ?;"
+    const sql = "SELECT passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname,passengers.phone_number,  delivery.id, delivery.coords, delivery.small_luggage, delivery.medium_luggage, delivery.large_luggage, delivery.pickup_time, delivery.origin, delivery.destination,delivery.status, date_format(delivery.date_time,'%M %d %Y, %hh:%mm') as date_time, delivery.price, delivery.distance FROM `delivery` INNER JOIN passengers on delivery.passenger = passengers.id WHERE delivery.id = ?;"
     dbConnection.query(sql, tripId,(err, result)=>{
         if(err){
             res.send({success:false})
@@ -107,7 +107,7 @@ exports.getDeliveryDetails = (req, res) => {
 exports.getHailingDetails = (req, res) => {
     const tripId = req.body.tripId
 
-    const sql = "SELECT  passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname, hailings.coords, hailings.id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `hailings` INNER JOIN passengers on hailings.passenger = passengers.id WHERE hailings.id = ?;"
+    const sql = "SELECT  passengers.id as passenger_id, passengers.firstname, passengers.middlename, passengers.lastname, passengers.phone_number, hailings.coords, hailings.id, hailings.pickup_time, hailings.origin, hailings.destination,hailings.status, date_format(hailings.date_time,'%M %d %Y, %hh:%mm') as date_time FROM `hailings` INNER JOIN passengers on hailings.passenger = passengers.id WHERE hailings.id = ?;"
     
     dbConnection.query(sql, tripId,(err, result)=>{
         if(err){
