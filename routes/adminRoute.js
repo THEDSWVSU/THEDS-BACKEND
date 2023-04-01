@@ -3,10 +3,13 @@ const { con } = require("../DbConnection")
 const router = express.Router()
 
 const adminController = require("./../controllers/adminController")
+const driverController = require("./../controllers/driverController")
 
 router.get("/getDrivers",(req, res)=>{
     adminController.getDrivers(req,res)
 })
+router.get("/driver-trips-per-day", driverController.driverTripsPerDay)
+
 router.post("/acceptDriver",(req, res)=>{
     adminController.acceptDriver(req, res)
 })

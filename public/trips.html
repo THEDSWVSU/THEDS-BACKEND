@@ -80,7 +80,6 @@
                 <th scope="col">Driver's Name</th>
                 <th scope="col">Date</th>
                 <th scope="col">Trips</th>
-                <th scope="col">Earnings</th>
               </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -96,35 +95,18 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      fetch("http://localhost:4000/adminApi/getDrivers")
+      fetch("http://localhost:4000/adminApi/driver-trips-per-day")
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
           const tbody = document.getElementById("tableBody");
 
-          data.forEach((element) => {
-            const btnAccept = `<button onclick = "accept('${element.id}')" class = "btn btn-primary btn-sm m-1">Accept</button>`;
-            const btnDecline = `<button onclick = "decline('${element.id}')" class = "btn btn-danger btn-sm m-1">Decline</button>`;
-            const btnActivate = `<button onclick = "activate('${element.id}')" class = "btn btn-primary btn-sm m-1">Activate</button>`;
-          
-            const btnDeactivate = `<button onclick = "deactivate('${element.id}')" class = "btn btn-danger btn-sm m-1">Deactivate</button>`;
+          data.forEach(async(element) => {
 
             const tr = `<tr>
-                        <th>${element.firstname}</th>
-                        <td>${element.middlename}</td>
-                        <td>${element.lastname}</td>
-                        <td>${element.motorcycle_brand}</td>
-                        <td>${element.engineCC}</td>
-                        <td>${element.color}</td>
-                        <td>${element.plate_number}</td>
-                        <td>${element.status}</td>
-                        <td>${
-                          element.status === "pending"
-                            ? btnAccept + btnDecline
-                            :element.status === "deactivated"?
-                            btnActivate:
-                             btnDeactivate
-                        }</td>
+                        <th>${element.firstname} ${element.middlename} ${element.lastname}</th>
+                        <td>${element.date}</td>
+                        <td>${element.trips}</td>
                       </tr>`;
 
             tbody.innerHTML += tr;

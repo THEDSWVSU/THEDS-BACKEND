@@ -156,6 +156,23 @@ exports.acceptTrip = (req, res) => {
     
     
 }
+exports.driverTripsPerDay = (req, res) => {
+    const sql = `SELECT date_format(trips.date_time,'%Y-%m-%d') as date,
+                 passengers.firstname, passengers.middlename, passengers.lastname,
+                 COUNT(trips.id) as trips,
+                 trips.service_id,
+                 trips.type
+                 from trips 
+                INNER JOIN passengers ON trips.driver = passengers.id WHERE trips.status = 'done' GROUP BY date_format(trips.date_time,'%Y-%m-%d')`
+
+    dbConnection.query(sql,(err, result)=>{
+        if(err){
+            console.log(err)
+            return res.sendStatus(500)
+        }
+        return res.send(result)
+    })
+}
 exports.updateTrip = async(req, res) => {
     const type = req.body.type
     const tripId = req.body.tripId
@@ -178,6 +195,15 @@ exports.updateTrip = async(req, res) => {
                 throw err1
             }
             console.log("updating",tripId)
+
+                const tripUpdateSql = "UPDATE trips SET status = ? WHERE service_id=?"
+                dbConnection.query(tripUpdateSql,[update,tripId],(err, result)=>{
+                    if(err){
+                        console.log(err)
+                    }
+                    console.log("updating trip",update)
+                })
+    
             res.send({success:true})
         })
 
