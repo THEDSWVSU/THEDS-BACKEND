@@ -5,7 +5,7 @@ var cookieParser = require("cookie-parser");
 var session = require("express-session");
 var cors = require('cors')
 const path = require('path')
-const conn = require('dbConnection').con
+const conn = require('./dbConnection').con
 
 
 const driverRoute = require("./routes/driverRoutes")
