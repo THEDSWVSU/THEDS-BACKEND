@@ -45,4 +45,13 @@ conn.connect(function (err) {
     console.log("Database connected")
     
   });
+setInterval(function(){
+  conn.query('SELECT 1',(err,result)=>{
+    if(err){
+        throw err
+    }
+    console.log('polling db conneciton',result)
+})
+
+},1000*15)
 module.exports = app
