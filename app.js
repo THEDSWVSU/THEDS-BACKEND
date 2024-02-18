@@ -5,13 +5,14 @@ var cookieParser = require("cookie-parser");
 var session = require("express-session");
 var cors = require('cors')
 const path = require('path')
-const conn = require('dbConnection').con
+const conn = require('./dbConnection').con
 
 
 const driverRoute = require("./routes/driverRoutes")
 const passengerRoute = require("./routes/passengerRoutes")
 const accountRoute = require("./routes/accountRoute")
-const adminRoute = require("./routes/adminRoute")
+const adminRoute = require("./routes/adminRoute");
+const { con } = require('./dbConnection');
 
 const PORT = 4000
 
@@ -45,4 +46,14 @@ conn.connect(function (err) {
     console.log("Database connected")
     
   });
+
+setInterval(function(){
+  conn.query('SELECT 1',(err,result)=>{
+    if(err){
+        throw err
+    }
+    console.log('polling db conneciton',result)
+})
+
+},1000*15)
 module.exports = app

@@ -108,7 +108,7 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      fetch("http://localhost:4000/adminApi/getDrivers")
+      fetch("https://theds-server1.onrender.com/adminApi/getDrivers")
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
@@ -144,7 +144,7 @@
           $("#table").DataTable()
         });
       function accept(data) {
-        fetch("http://localhost:4000/adminApi/acceptDriver", {
+        fetch("https://theds-server1.onrender.com/adminApi/acceptDriver", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -163,7 +163,7 @@
         });
       }
       function decline(data) {
-        fetch("http://localhost:4000/adminApi/declineDriver", {
+        fetch("https://theds-server1.onrender.com/adminApi/declineDriver", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -185,7 +185,7 @@
         if (!confirm("Do you really want to deactivate this account?")) {
           return txt = "You pressed OK!";
         }
-        fetch("http://localhost:4000/adminApi/deactivateDriver", {
+        fetch("https://theds-server1.onrender.com/adminApi/deactivateDriver", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -208,7 +208,7 @@
         if (!confirm("Do you really want to activate this account?")) {
           return 0
         }
-        fetch("http://localhost:4000/adminApi/activateDriver", {
+        fetch("https://theds-server1.onrender.com/adminApi/activateDriver", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

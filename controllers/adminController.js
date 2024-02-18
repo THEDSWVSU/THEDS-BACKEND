@@ -9,6 +9,7 @@ exports.getDrivers=async(req, res)=>{
         }
         res.send(result)
     })
+    
 }
 exports.acceptDriver=async(req, res)=>{
     const id = req.body.id
